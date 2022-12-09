@@ -9,6 +9,7 @@
   "author": "Pedro Frias",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^16.0.3",
     "inquirer": "^9.1.4"
   }
 }
