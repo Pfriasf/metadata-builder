@@ -8,9 +8,9 @@ const imageFolder = path.join(__dirname, "build/images")
 const jsonFolder = path.join(__dirname, "build/json")
 const collectionName = process.env.COLLECTION_NAME
 const urlBase = process.env.EXTERNAL_URL_BASE
-const collectionPath = collectionName.replace(/\s/g, '-').toLowerCase();
 const edition = process.env.EDITION
 const contentIdentifier = process.env.CID
+const collectionPath = collectionName.replace(/\s/g, '-').toLowerCase();
 
 
 const metadata = [];
@@ -36,13 +36,29 @@ fs.readdir(imageFolder, (err, files) => {
       atributes:[],
     }
 
+    let iaTrait = {
+      trait_type:"",
+      value: ""
+    }
+
     let name = path.parse(`${imageFolder}/${file}`).name
     let baseName = path.parse(`${imageFolder}/${file}`).base
 
     let nftName = `${collectionName} #${name}`
     nftMetadata.name = nftName
     nftMetadata.description = `Design #${name} of ${collectionName} collection`
-    nftMetadata.image = `${contentIdentifier}/${baseName}´`
+    nftMetadata.image = `${contentIdentifier}/${baseName}`
+
+    iaTrait.trait_type = "pattern_and_shape"
+
+    fs.readFile("iaTags.json", (err, data) => {
+      if (err) throw err;
+      console.log(JSON.stringify(data))
+    })
+
+    iaTrait.value 
+
+    nftMetadata.atributes.push(iaTrait)
     
     if (edition) {
       nftMetadata.external_url = `${urlBase}/${collectionPath}/${edition}/${name}`
@@ -52,7 +68,7 @@ fs.readdir(imageFolder, (err, files) => {
 
     fs.writeFile(`${jsonFolder}/${name}.json`, JSON.stringify(nftMetadata), function(err) {
       if (err) throw err;
-      console.log(`File ${baseName} created`)
+      console.log(`File ${name}.json created`)
     })
 
     metadata.push(nftMetadata)
