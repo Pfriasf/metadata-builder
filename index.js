@@ -1,15 +1,17 @@
 require('dotenv').config();
 
 const fs = require("fs");
+const { basename } = require('path');
 const path = require("path")
 
 
 const imageFolder = path.join(__dirname, "build/images")
 const jsonFolder = path.join(__dirname, "build/json")
-const namePrefix = process.env.NAME_PREFIX
+const collectionName = process.env.COLLECTION_NAME
 const urlBase = process.env.EXTERNAL_URL_BASE
-const collectionPath = namePrefix.replace(/\s/g, '-').toLowerCase();
+const collectionPath = collectionName.replace(/\s/g, '-').toLowerCase();
 const edition = process.env.EDITION
+const contentIdentifier = process.env.CID
 
 
 const metadata = [];
@@ -36,9 +38,12 @@ fs.readdir(imageFolder, (err, files) => {
     }
 
     let name = path.parse(`${imageFolder}/${file}`).name
-    let nftName = `${namePrefix} #${name}`
+    let baseName = path.parse(`${imageFolder}/${file}`).base
+
+    let nftName = `${collectionName} #${name}`
     nftMetadata.name = nftName
-    nftMetadata.description = "description"
+    nftMetadata.description = `Design #${name} of ${collectionName} collection`
+    nftMetadata.image = `${contentIdentifier}/${baseName}´`
     
     if (edition) {
       nftMetadata.external_url = `${urlBase}/${collectionPath}/${edition}/${name}`
@@ -48,6 +53,7 @@ fs.readdir(imageFolder, (err, files) => {
 
     fs.writeFile(`${jsonFolder}/${name}.json`, JSON.stringify(nftMetadata), function(err) {
       if (err) throw err;
+      console.log(`File ${baseName} created`)
     })
 
     metadata.push(nftMetadata)
@@ -55,6 +61,7 @@ fs.readdir(imageFolder, (err, files) => {
     if(files.length -1 == i){
       fs.writeFile(`${jsonFolder}/_metadata.json`, JSON.stringify(metadata), function(err) {
         if (err) throw err;
+        console.log("_metadata.json created")
       })
     }
   })
