@@ -49,11 +49,12 @@ fs.readdir(imageFolder, (err, files) => {
     nftMetadata.description = `Design #${name} of ${collectionName} collection`
     nftMetadata.image = `${contentIdentifier}/${baseName}`
 
-    iaTrait.trait_type = "pattern_and_shape"
-
-    fs.readFile("iaTags.json", (err, data) => {
+    
+    fs.readFile("iaTags.json", "utf8", (err, data) => {
       if (err) throw err;
-      console.log(JSON.stringify(data))
+      let json = JSON.parse(data)
+      iaTrait.trait_type = "pattern_and_shape"
+      iaTrait.value = json[baseName][0]
     })
 
     iaTrait.value 
